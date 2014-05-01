@@ -168,12 +168,10 @@ class Zpipe(object):
 
         bytes_written = self.fn_write(self.pipe_handle, ctypes.c_char_p(str), ctypes.c_ulong(len(str)), timeout)
         if bytes_written < 0:
-            raise TimeoutError('Write Timeout?')
+            if self.fn_error() == errno.EAGAIN:
+                raise TimeoutError('Write timeout')
 
-            # if self.fn_error() == errno.EAGAIN:
-            #     raise TimeoutError('Write timeout')
-
-            # raise IOError('write failed: %d' % bytes_written)
+            raise IOError('write failed: %d' % bytes_written)
 
         return int(bytes_written)
 
