@@ -4,6 +4,7 @@ import ctypes
 import io
 import signal
 import errno
+import os
 
 # set up some signal handlers
 from threading import currentThread
@@ -16,8 +17,16 @@ if currentThread().getName() == 'MainThread':
 
 class Zpipe(object):
     def __init__(self, descriptor, read_timeout=0, write_timeout=0):
-        self.zpipes = ctypes.CDLL("libzbroker.so", mode=ctypes.RTLD_GLOBAL)
-        self.zpipesclient = ctypes.CDLL("libzpipesclient.so", mode=ctypes.RTLD_GLOBAL)
+        broker_so="libzbroker.so"
+        zpipesclient_so="libzpipesclient.so"
+        
+        if os.environ.get('ZPIPES_LIB_PATH'):
+            broker_so = os.path.join(os.environ['ZPIPES_LIB_PATH'], broker_so)
+            zpipesclient_so = os.path.join(os.environ['ZPIPES_LIB_PATH'], zpipesclient_so)
+
+        
+        self.zpipes = ctypes.CDLL(broker_so, mode=ctypes.RTLD_GLOBAL)
+        self.zpipesclient = ctypes.CDLL(zpipesclient_so, mode=ctypes.RTLD_GLOBAL)
 
         self.fn_open = self.zpipesclient.zpipes_client_new
         self.fn_read = self.zpipesclient.zpipes_client_read
