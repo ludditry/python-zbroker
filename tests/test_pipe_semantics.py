@@ -14,18 +14,23 @@ import zbroker
 from nose.tools import *
 from functools import wraps
 
-def timeout(seconds=3, error_message=os.strerror(errno.ETIME)):
+DEFAULT_TIMEOUT = 3
+
+class TimeoutException(Exception):
+    pass
+
+def timeout(seconds=DEFAULT_TIMEOUT+1, error_message=os.strerror(errno.ETIME)):
     def decorator(func):
         def _handle_timeout(signum, frame):
-            raise OSError(errno.ETIME, "Timeout")
+            raise TimeoutException("Timeout")
 
         def wrapper(*args, **kwargs):
             signal.signal(signal.SIGALRM, _handle_timeout)
             signal.alarm(seconds)
+            result = None
             try:
                 result = func(*args, **kwargs)
             finally:
-                print "alarm!"
                 signal.alarm(0)
             return result
 
@@ -50,7 +55,6 @@ class TestZpipeSemantics:
     
     def setup(self):
         print "opening reader/writer pipes"
-        time.sleep(2)
         pipe_uuid = uuid.uuid4()
         self.reader_handle = self.open_pipe(pipe_uuid, 'r')
         self.writer_handle = self.open_pipe(pipe_uuid, 'w')
@@ -73,21 +77,21 @@ class TestZpipeSemantics:
     def test_0101_simpler_noop_test(self):
         assert(True)
         
-    @raises(OSError)
+    @raises(TimeoutException)
     @timeout()
     def test_0110_write_without_reader_blocks(self):
         new_writer = self.open_pipe(uuid.uuid4(), 'w')
         new_writer.write('hi')
         new_writer.close()
 
-    @raises(OSError)
+    @raises(TimeoutException)
     @timeout()
     def test_0111_read_without_writer_blocks(self):
         new_reader = self.open_pipe(uuid.uuid4(), 'r')
         new_reader.read(1)
         new_reader.close()
 
-    @raises(OSError)
+    @raises(TimeoutException)
     @timeout()
     def test_0120_read_without_data_blocks(self):
         self.reader_handle.read(1)
@@ -103,14 +107,14 @@ class TestZpipeSemantics:
 
         assert(result == string)
 
-    @timeout()
+    @timeout(seconds=10)
     def test_0140_test_many_writes(self):
         count = 1000
         for val in range(0, count):
-            self.writer_handle.write('%s\n' % val)
+            print 'writing %d' % val
+            self.writer_handle.write('arf arf arf %s\n' % val)
 
         self.writer_handle.close()
-
         results = self.reader_handle.read().split('\n')
         # shave off the trailing ''
         assert(len(results[:-1]) == count)
@@ -119,7 +123,7 @@ class TestZpipeSemantics:
     def test_0150_test_flush_after_closes(self):
         self.writer_handle.write('123')
         self.writer_handle.write('456')
-        assert(self.reader_handle.read(4) == '123')
+        assert(self.reader_handle.read(3) == '123')
         self.reader_handle.close()
         self.writer_handle.close()
 
@@ -131,7 +135,7 @@ class TestZpipeSemantics:
 
         # if the pipe flushed, a read gives me 789.  if not,
         # then i get 456
-        assert(self.reader_handle.read(4) == '789')
+        assert(self.reader_handle.read(3) == '789')
 
     @timeout()
     def test_0160_test_read_succeeds_until_eof(self):
