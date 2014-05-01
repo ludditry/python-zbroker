@@ -119,10 +119,12 @@ class Zpipe(object):
                 return result
                 
             if bytes_read == -1:
-                if self.fn_error() == errno.EAGAIN:
-                    raise TimeoutError('Read timeout: %d' % self.fn_error())
+                raise TimeoutError('Read Timeout: %d' % self.fn_error())
 
-                raise IOError('Read error: %d' % self.fn_error())
+                # if self.fn_error() == errno.EAGAIN:
+                #     raise TimeoutError('Read timeout: %d' % self.fn_error())
+
+                # raise IOError('Read error: %d' % self.fn_error())
 
             total_bytes_read += bytes_read
             result = result + buf.raw[0:bytes_read]
@@ -168,10 +170,11 @@ class Zpipe(object):
 
         bytes_written = self.fn_write(self.pipe_handle, ctypes.c_char_p(str), ctypes.c_ulong(len(str)), timeout)
         if bytes_written < 0:
-            if self.fn_error() == errno.EAGAIN:
-                raise TimeoutError('Write timeout')
+            raise TimeoutError('Write Timeout')
+        #     if self.fn_error() == errno.EAGAIN:
+        #         raise TimeoutError('Write timeout')
 
-            raise IOError('write failed: %d' % bytes_written)
+        #     raise IOError('write failed: %d' % self.fn_error())
 
         return int(bytes_written)
 
