@@ -1,0 +1,7 @@
+- name: writer
+  script:
+    - open pipe1 write
+    - expect timeouterror
+    - write pipe1 abc
+    - close pipe1 write
+

@@ -12,8 +12,10 @@ from threading import currentThread
 class TimeoutError(Exception):
     pass
 
+
 if currentThread().getName() == 'MainThread':
     signal.signal(signal.SIGINT, signal.SIG_DFL)
+
 
 class Zpipe(object):
     def __init__(self, descriptor, read_timeout=0, write_timeout=0):

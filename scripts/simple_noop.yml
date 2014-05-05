@@ -1,0 +1,9 @@
+- name: reader
+  script:
+    - open pipe1 read
+    - close pipe1 read
+- name: writer
+  script:
+    - open pipe1 write
+    - close pipe1 write
+

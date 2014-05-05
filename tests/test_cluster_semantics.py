@@ -53,15 +53,16 @@ class TestZpipeSemantics:
         pass
 
     def open_write_pipe(self, pipe):
-        return self.write_server.modules.zbroker.Zpipe('local|>%s' % pipe, write_timeout=DEFAULT_TIMEOUT * 1000)
+        # self.write_server = getattr(self, 'write_server', rpyc.classic.connect('192.168.0.198'))
+        # return self.write_server.modules.zbroker.Zpipe('local|>%s' % pipe, write_timeout=DEFAULT_TIMEOUT * 1000)
+        return zbroker.Zpipe('local|>%s' % pipe, write_timeout=DEFAULT_TIMEOUT * 1000)
 
     def open_read_pipe(self, pipe):
-        return self.read_server.modules.zbroker.Zpipe('local|%s' % pipe, read_timeout=DEFAULT_TIMEOUT * 1000)
+        # self.read_server = getattr(self, 'read_server', rpyc.classic.connect("localhost"))
+        # return self.read_server.modules.zbroker.Zpipe('local|%s' % pipe, read_timeout=DEFAULT_TIMEOUT * 1000)
+        return zbroker.Zpipe('local2|%s' % pipe, read_timeout=DEFAULT_TIMEOUT * 1000)
 
     def setup(self):
-        self.read_server = getattr(self, 'read_server', rpyc.classic.connect("localhost"))
-        self.write_server = getattr(self, 'write_server', rpyc.classic.connect('192.168.0.198'))
-
         print "opening reader/writer pipes"
         pipe_uuid = uuid.uuid4()
         self.reader_handle = self.open_read_pipe(pipe_uuid)
@@ -131,15 +132,23 @@ class TestZpipeSemantics:
     def test_0150_test_flush_after_closes(self):
         self.writer_handle.write('123')
         self.writer_handle.write('456')
+        print "wrote 6 in two chunks"
         assert(self.reader_handle.read(3) == '123')
+        print "read 3"
         self.reader_handle.close()
+        print "closed reader"
         self.writer_handle.close()
+        print "closed writer"
 
         # pipe should clear at this point
         self.reader_handle = self.open_read_pipe(self.pipe_uuid)
+        print "opened read pipe"
+        time.sleep(1)
         self.writer_handle = self.open_write_pipe(self.pipe_uuid)
+        print "opened write pipe"
 
         self.writer_handle.write('789')
+        print "wrote 3"
 
         # if the pipe flushed, a read gives me 789.  if not,
         # then i get 456
