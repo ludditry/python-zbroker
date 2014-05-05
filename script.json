@@ -1,0 +1,13 @@
+{
+    "test_id": 1,
+    "node_id": 1,
+    "script": [
+        "timeout 1000",
+        "sleep 1",
+        "open pipe1 write",
+        "expect timeouterror",
+        "write pipe1 abc",
+        "close pipe1 write"
+    ]
+}
+
