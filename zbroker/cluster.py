@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import time
+import SocketServer
 import BaseHTTPServer
 import json
 import subprocess
@@ -8,6 +9,11 @@ import tempfile
 import os
 import sys
 import signal
+
+class ThreadingSimpleServer(SocketServer.ThreadingMixIn,
+                            BaseHTTPServer.HTTPServer):
+    pass
+
 
 class ClusterHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def handle_post(self, request_data):
@@ -56,7 +62,7 @@ zpipes_server
 
         while(script.poll() is None and wait_time > 0):
             time.sleep(1)
-            wait_time = wait_time - 1
+            wait_time -= 1
 
         if wait_time == 0:
             # timeout condition
@@ -67,7 +73,6 @@ zpipes_server
 
         broker.wait()
         broker_log_fd.close()
-
 
         # process has terminated, grab all the data.
         broker_log=''
@@ -114,8 +119,7 @@ zpipes_server
 
 
 if __name__ == '__main__':
-    server_class = BaseHTTPServer.HTTPServer
-    httpd = server_class(('', 8080), ClusterHandler)
+    httpd = ThreadingSimpleServer(('', 8080), ClusterHandler)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
