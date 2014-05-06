@@ -1,16 +1,15 @@
 - name: writer
   script:
     - sleep 1
-    - timeout 3000
     - open pipe1 write
-    - write pipe1 abc
+    - write pipe1 ab
+    - write pipe1 cd
+    - write pipe1 ef
     - close pipe1 write
 - name: reader
-  script:
+  script: 
     - sleep 1
-    - timeout 3000
     - open pipe1 read
-    - read pipe1 3 abc
+    - sleep 2
+    - read pipe1 4096 abcdef
     - close pipe1 read
-
-

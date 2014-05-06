@@ -85,6 +85,8 @@ zpipes_server
         with open(test_log_path, 'r') as f:
             script_log = f.read()
 
+        sys.stdout.flush()
+
         return { 'result': result,
                  'broker_log': broker_log,
                  'script_log': script_log }
