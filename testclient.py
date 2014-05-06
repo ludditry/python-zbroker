@@ -85,17 +85,17 @@ class TestRunner(object):
         report = 'Error in test "%s"\n' % test
         for host in hosts:
             report += '\n\n## Host "%s" (%s) ##\n' % (hosts[host]['name'], hosts[host]['host'])
-            report += '###Test script###\n~~~~\n'
+            report += '### Test script ###\n~~~~\n'
             for line in hosts[host]['script']:
                 report += '%s\n' % line
             report += '~~~~\n\n'
 
-            report += '###Script Log###\n~~~~\n'
+            report += '### Script Log ###\n~~~~\n'
             for line in hosts[host]['result']['script_log'].split('\n'):
                 report += '%s\n' % line
             report += '~~~~\n\n'
 
-            report += '###Broker Log###\n~~~~\n'
+            report += '### Broker Log ###\n~~~~\n'
             for line in hosts[host]['result']['broker_log'].split('\n'):
                 report += '%s\n' % line
             report += '~~~~\n\n'
