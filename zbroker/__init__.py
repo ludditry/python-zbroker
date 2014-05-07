@@ -19,15 +19,15 @@ if currentThread().getName() == 'MainThread':
 
 class Zpipe(object):
     def __init__(self, descriptor, read_timeout=0, write_timeout=0):
-        broker_so="libzbroker.so"
-        zpipesclient_so="libzpipesclient.so"
-        
+        zmtp_so="libzmtp.so"
+        zpipesclient_so="libzbroker_cli.so"
+
         if os.environ.get('ZPIPES_LIB_PATH'):
-            broker_so = os.path.join(os.environ['ZPIPES_LIB_PATH'], broker_so)
+            zmtp_so = os.path.join(os.environ['ZPIPES_LIB_PATH'], zmtp_so)
             zpipesclient_so = os.path.join(os.environ['ZPIPES_LIB_PATH'], zpipesclient_so)
 
-        
-        self.zpipes = ctypes.CDLL(broker_so, mode=ctypes.RTLD_GLOBAL)
+
+        self.zpipes = ctypes.CDLL(zmtp_so, mode=ctypes.RTLD_GLOBAL)
         self.zpipesclient = ctypes.CDLL(zpipesclient_so, mode=ctypes.RTLD_GLOBAL)
 
         self.fn_open = self.zpipesclient.zpipes_client_new
@@ -105,10 +105,10 @@ class Zpipe(object):
         if self.eof:
             raise IOError('Read past EOF')
 
-            
+
         bytes_to_read = size if size != -1 else 4294967296 # 4G
         total_bytes_read = 0;
-        
+
         result = ""
 
         while not self.eof and bytes_to_read > 0:
@@ -119,7 +119,7 @@ class Zpipe(object):
             if bytes_read == 0:
                 self.eof = True
                 return result
-                
+
             if bytes_read == -1:
                 raise TimeoutError('Read Timeout: %d' % self.fn_error())
 

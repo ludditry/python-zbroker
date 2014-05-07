@@ -34,7 +34,7 @@ server
     animate = 1
 zpipes_server
     bind
-        endpoint = ipc://@/zpipes/%s
+        endpoint = ipc:///tmp/zpipes-%s
 """ % (result_dir, broker_name)
 
         with open(broker_cfg_path, 'w') as f:
@@ -42,7 +42,7 @@ zpipes_server
 
         broker_log_fd = open(broker_log_path, 'w')
         broker = subprocess.Popen(['zbroker', broker_cfg_path], stderr=subprocess.STDOUT, stdout=broker_log_fd)
-        
+
         print 'broker running as pid %d' % broker.pid
 
         time.sleep(1)
@@ -69,6 +69,13 @@ zpipes_server
             print 'script had to be forcibly killed'
             os.kill(script.pid, signal.SIGTERM)
             os.kill(broker.pid, signal.SIGTERM)
+
+            time.sleep(1)
+            try:
+                os.kill(script.pid, signal.SIGKILL)
+                os.kill(script.pid, signal.SIGKILL)
+            except:
+                pass
         else:
             print 'script exited cleanly'
             os.kill(broker.pid, signal.SIGTERM)
@@ -121,4 +128,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
