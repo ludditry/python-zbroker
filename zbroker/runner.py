@@ -18,6 +18,7 @@ log_fd = None
 def log(msg):
     if log_fd is not None:
         log_fd.write('%s\n' % msg)
+        log_fd.flush()
     sys.stderr.write('%s\n' % msg)
 
 def read_script(script_file):
@@ -40,7 +41,7 @@ def execute(instruction):
     tokens = [eval(x) for x in instruction.split()]
     if len(tokens) == 0:
         return
-    
+
     if tokens[0] == 'timeout':
         timeout = int(tokens[1])
         log('Set timeout to %d' % timeout)
@@ -121,7 +122,7 @@ if __name__ == '__main__':
                 log('Test failed')
                 log_fd.close()
                 sys.exit(1)
-                
+
 
     if expect_exception is not None:
         log('Expected exception "%s" did not occur' % expect_exception)
