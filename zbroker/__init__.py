@@ -114,7 +114,7 @@ class Zpipe(object):
         while not self.eof and bytes_to_read > 0:
             read_len = min(bytes_to_read, 4096)
             buf = ctypes.create_string_buffer(read_len + 1)
-            bytes_read = self.fn_read(self.pipe_handle, buf, ctypes.c_ulong(read_len), read_timeout)
+            bytes_read = self.fn_read(self.pipe_handle, buf, ctypes.c_ulong(read_len), timeout)
 
             if bytes_read == 0:
                 self.eof = True
