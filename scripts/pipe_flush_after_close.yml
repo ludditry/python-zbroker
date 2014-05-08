@@ -1,6 +1,6 @@
 - name: writer
   script:
-    - sleep 1
+    - timeout 0
     - open pipe1 write
     - write pipe1 abc
     - write pipe1 def
@@ -12,7 +12,7 @@
 
 - name: reader
   script:
-    - sleep 1
+    - timeout 0
     - open pipe1 read
     - sleep 1
     - close pipe1 read

@@ -34,7 +34,7 @@ server
     animate = 1
 zpipes_server
     bind
-        endpoint = ipc:///tmp/zpipes-%s
+        endpoint = ipc://@/zpipes/%s
 """ % (result_dir, broker_name)
 
         with open(broker_cfg_path, 'w') as f:
