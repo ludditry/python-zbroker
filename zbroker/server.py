@@ -40,8 +40,13 @@ zpipes_server
         with open(broker_cfg_path, 'w') as f:
             f.write(broker_cfg)
 
+        zbroker_path = 'zbroker'
+        if os.path.islink('/opt/bundler/zvm-zpipes/current'):
+            zbroker_path = '/opt/bundler/zvm-zpipes/current/bin/%s' % zbroker_path
+
+        
         broker_log_fd = open(broker_log_path, 'w')
-        broker = subprocess.Popen(['zbroker', broker_cfg_path], stderr=subprocess.STDOUT, stdout=broker_log_fd)
+        broker = subprocess.Popen([zbroker_path, broker_cfg_path], stderr=subprocess.STDOUT, stdout=broker_log_fd)
 
         print 'broker running as pid %d' % broker.pid
 
