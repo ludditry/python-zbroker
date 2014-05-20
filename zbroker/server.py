@@ -121,7 +121,7 @@ def main():
     url_map = (
         '/', 'TestRunner'
     )
-
+    web.config.debug = False
     app = web.application(url_map, globals())
     app.run()
 
