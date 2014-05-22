@@ -149,8 +149,8 @@ class TestRunner(object):
                                        hosts[node_id]['port'])
 
         if any([hosts[x]['status_code'] != 200 for x in hosts]):
-            self.errors.append((False, 'Error in remote execution'))
-            return False, 'Error in remote execution'
+            self.errors.append((False, 'Error in remote execution\n"))
+            return False, 'Error in remote execution\n'
 
         if all([hosts[x]['result']['result'] == 0 for x in hosts]):
             return True, 'Success'
@@ -173,7 +173,7 @@ class TestRunner(object):
             for line in hosts[host]['result']['broker_log'].split('\n'):
                 report += '%s\n' % line
             report += '~~~~\n\n'
-        self.errors.append((False, 'Error in remote execution'))
+        self.errors.append((False, report))
         return False, report
 
 def usage():
