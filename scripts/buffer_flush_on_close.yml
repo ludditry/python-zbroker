@@ -1,5 +1,6 @@
 - name: writer
   script:
+    - timeout 9000
     - sleep 1
     - open pipe1 write
     - write pipe1 ab
@@ -8,6 +9,7 @@
     - close pipe1 write
 - name: reader
   script: 
+    - timeout 7000
     - sleep 1
     - open pipe1 read
     - sleep 2

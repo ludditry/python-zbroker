@@ -2,7 +2,7 @@
   script:
     - sleep 1
     - open pipe1 write
-    - sleep 4
+    - sleep 6
     - close pipe1 write
 - name: reader
   script:
