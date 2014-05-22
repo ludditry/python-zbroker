@@ -149,7 +149,7 @@ class TestRunner(object):
                                        hosts[node_id]['port'])
 
         if any([hosts[x]['status_code'] != 200 for x in hosts]):
-            self.errors.append((False, 'Error in remote execution\n"))
+            self.errors.append((False, 'Error in remote execution\n'))
             return False, 'Error in remote execution\n'
 
         if all([hosts[x]['result']['result'] == 0 for x in hosts]):
