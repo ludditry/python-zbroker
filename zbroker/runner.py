@@ -16,10 +16,11 @@ expect_exception = None
 log_fd = None
 
 def log(msg):
+    prefix = datetime.datetime.now().strftime("%y-%m-%d %H:%M:%S")
     if log_fd is not None:
-        log_fd.write('%s\n' % msg)
+        log_fd.write('%s %s\n' % (prefix, msg))
         log_fd.flush()
-    sys.stderr.write('%s\n' % msg)
+    sys.stderr.write('%s %s\n' % (prefix, msg))
 
 def read_script(script_file):
     with open(script_file, 'r') as f:
