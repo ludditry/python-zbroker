@@ -28,7 +28,7 @@ class TestRunner(object):
 
         zyre_interface = 'eth4'
 
-        if os.file.exists('/etc/zsys-interface'):
+        if os.path.exists('/etc/zsys-interface'):
             with open('/etc/zsys-interface', 'r') as f:
                 zyre_interface = f.read().split('\n').pop(0)
 
