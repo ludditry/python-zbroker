@@ -41,6 +41,8 @@ server
     workdir = %s
     animate = 1
 zyre
+    port = 1234
+    interval = 250
     interface = %s
     name = broker-%s
 zpipes_server
