@@ -26,16 +26,27 @@ class TestRunner(object):
         broker_log_path = os.path.join(result_dir, 'broker.log')
         broker_cfg_path = os.path.join(result_dir, 'zbroker.cfg')
 
+        zyre_interface = 'eth4'
+
+        if os.file.exists('/etc/zsys-interface'):
+            with open('/etc/zsys-interface', 'r') as f:
+                zyre_interface = f.read().split('\n').pop(0)
+
+            
+
         broker_cfg = """
 server
     timeout = 10000
     background = 0
     workdir = %s
     animate = 1
+zyre
+    interface = %s
+    name = broker-%s
 zpipes_server
     bind
         endpoint = ipc://@/zpipes/%s
-""" % (result_dir, broker_name)
+""" % (result_dir, broker_name, zyre_interface, broker_name)
 
         with open(broker_cfg_path, 'w') as f:
             f.write(broker_cfg)
