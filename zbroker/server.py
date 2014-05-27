@@ -46,7 +46,7 @@ zyre
 zpipes_server
     bind
         endpoint = ipc://@/zpipes/%s
-""" % (result_dir, broker_name, zyre_interface, broker_name)
+""" % (result_dir, zyre_interface, broker_name, broker_name)
 
         with open(broker_cfg_path, 'w') as f:
             f.write(broker_cfg)
